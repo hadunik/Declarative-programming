@@ -1,0 +1,36 @@
+    test1 = 
+        categories // "c" `wher` col "c.CLASS" `eq` str "Mineral"
+        `hjoin` (materials // "m" `indexby` col "WARE") `on` col "c.WARE"
+        `hjoin` (products // "p" `indexby` col "BILL_ID") `on` col "m.BILL_ID"
+        `orderby`["p.WARE":asc]
+        `select` ["p.WARE"]
+        & distinct
+
+    test3 = 
+        materials // "m1"
+        `hjoin` (products // "p1" `indexby` col "BILL_ID") `on` col "m1.BILL_ID"
+        `hjoin` (materials // "m2" `indexby` col "WARE") `on` col "p1.WARE"
+        `hjoin` (products // "p2" `indexby` col "BILL_ID") `on` col "m2.BILL_ID"
+        `hjoin` (manufacturers // "mn1" `indexby` col "BILL_ID") `on` col "p1.BILL_ID"
+        `hjoin` (manufacturers // "mn2" `indexby` col "BILL_ID") `on` col "p2.BILL_ID"
+        `wher` col "mn1.COMPANY" `eq` col "mn2.COMPANY"
+        `orderby` ["mn2.COMPANY":asc]
+        `select` ["mn2.COMPANY"]
+        &distinct
+
+    test2 = 
+        (products // "p"
+        `hjoin` (
+        (categories // "c1" `wher` col "c1.CLASS" `eq` str "Stuff")
+        // "c1" `indexby` col "c1.WARE") `on` col "p.WARE"
+        `select` ["p.BILL_ID", "p.WARE"]) // "p"
+        `hjoin` ((
+        materials // "m"
+        `hjoin` (
+        (categories // "c2" `wher` col "c2.CLASS" `eq` str "Mineral")
+        // "c2" `indexby` col "c2.WARE") `on` col "m.WARE"
+        `select` ["m.BILL_ID", "m.WARE"]
+        ) // "m" `indexby` col "m.BILL_ID") `on` col "p.BILL_ID"
+        `select` ["m.BILL_ID", "p.WARE", "m.WARE"]
+        & limit 0 50
+
